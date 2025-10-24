@@ -56,7 +56,7 @@ repos:
     rev: v1.17.0
     hooks:
       - id: mypy
-        args: [ "--ignore-missing-imports", "--scripts-are-modules" ]
+        args: [ "--ignore-missing-imports", "--scripts-are-modules" , --implicit-reexport]
         additional_dependencies:
           - pydantic
           - types-DateTimeRange

@@ -12,5 +12,7 @@ class BaseModel(DeclarativeBase):
     id: Mapped[UUID] = mapped_column(SQLUUID, primary_key=True, default=uuid4)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime, server_default=func.now(), onupdate=func.now()
+        DateTime,
+        server_default=func.now(),
+        onupdate=func.now(),
     )

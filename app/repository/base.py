@@ -27,38 +27,30 @@ class BaseRepository:
         self.model = model
 
     async def create(self, schema: Any) -> Any:
-        async with self.session as session:
-            query = (
-                insert(self.model).values(**schema.model_dump()).returning(self.model)
-            )
-            result = (await session.execute(query)).scalar_one()
-            return result
+        query = insert(self.model).values(**schema.model_dump()).returning(self.model)
+        result = (await self.session.execute(query)).scalar_one()
+        return result
 
     async def get_list(self, offset: int, limit: int) -> Sequence[Any]:
-        async with self.session as session:
-            query = select(self.model).offset(offset=offset).limit(limit=limit)
-            result = (await session.execute(query)).scalars().all()
-            return result
+        query = select(self.model).offset(offset=offset).limit(limit=limit)
+        result = (await self.session.execute(query)).scalars().all()
+        return result
 
     async def get_by_uuid(self, uuid: UUID) -> Any:
-        async with self.session as session:
-            query = select(self.model).where(self.model.id == uuid)
-            result = (await session.execute(query)).scalar_one_or_none()
-            return result
+        query = select(self.model).where(self.model.id == uuid)
+        result = (await self.session.execute(query)).scalar_one_or_none()
+        return result
 
     async def update(self, uuid: UUID, schema: Any) -> Any:
-        async with self.session as session:
-            query = (
-                update(self.model)
-                .where(self.model.id == uuid)
-                .values(**schema.model_dump())
-                .returning(self.model)
-            )
-            result = (await session.execute(query)).scalar_one()
-            return result
+        query = (
+            update(self.model)
+            .where(self.model.id == uuid)
+            .values(**schema.model_dump())
+            .returning(self.model)
+        )
+        result = (await self.session.execute(query)).scalar_one()
+        return result
 
     async def delete(self, uuid: UUID) -> None:
-        async with self.session as session:
-            query = delete(self.model).where(self.model.id == uuid)
-            await session.execute(query)
-            await session.commit()
+        query = delete(self.model).where(self.model.id == uuid)
+        await self.session.execute(query)

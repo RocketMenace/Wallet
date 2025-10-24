@@ -15,14 +15,15 @@ from decimal import Decimal
 
 class Wallet(BaseModel):
     __tablename__ = "wallets"
-    balance: Mapped[Decimal] = mapped_column(NUMERIC(19, 4), default=Decimal("0.00"))
+    balance: Mapped[Decimal] = mapped_column(NUMERIC(19, 2), default=Decimal("0.00"))
 
     # === RELATIONSHIPS ===
     transactions: Mapped[list["Transaction"]] = relationship(
-        back_populates="wallet", cascade="all, delete-orphan"
+        back_populates="wallet",
+        cascade="all, delete-orphan",
     )
 
-    # === TABLE ARGUMENTS ===
+    # === TABLE ARGS ===
     __table_args__ = (CheckConstraint("balance >= 0", name="non_negative_balance"),)
 
 
@@ -30,14 +31,15 @@ class Transaction(BaseModel):
     __tablename__ = "transactions"
 
     wallet_id: Mapped[UUID] = mapped_column(
-        ForeignKey("wallets.id", ondelete="CASCADE"), index=True
+        ForeignKey("wallets.id", ondelete="CASCADE"),
+        index=True,
     )
-    amount: Mapped[Decimal] = mapped_column(NUMERIC(19, 4))
+    amount: Mapped[Decimal] = mapped_column(NUMERIC(19, 2))
     kind: Mapped[OperationType] = mapped_column(SQLEnum(OperationType))
 
     # === RELATIONSHIPS ===
     wallet: Mapped["Wallet"] = relationship(back_populates="transactions")
-    # === TABLE ARGUMENTS ===
+    # === TABLE ARGS ===
     __table_args__ = (
         CheckConstraint("amount > 0", name="positive_amount"),
         Index("idx_transaction_wallet_created", "wallet_id", "created_at"),
