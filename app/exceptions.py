@@ -27,6 +27,13 @@ class WalletNotFoundError(CoreServiceException):
         return CoreServiceExceptionSchema(message=self.message, detail=self.detail)
 
 
+class NotEnoughCredits(CoreServiceException):
+    def __init__(self, wallet_id: UUID, message: Optional[str] = None):
+        self.wallet_id = wallet_id
+        self.message = message or f"Wallet ID {wallet_id} not enough credits"
+        super().__init__(message=self.message, detail=f"Wallet ID: {wallet_id}")
+
+
 def register_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(WalletNotFoundError)
     def wallet_not_found_handler(
@@ -35,7 +42,6 @@ def register_error_handlers(app: FastAPI) -> None:
     ) -> Response:
         error_detail = {
             "message": exc.message,
-            "code": "WALLET_NOT_FOUND",
             "field": "wallet_id",
             "detail": exc.detail,
         }
@@ -47,6 +53,22 @@ def register_error_handlers(app: FastAPI) -> None:
         )
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
+            content=response_schema.model_dump(),
+        )
+
+    @app.exception_handler(NotEnoughCredits)
+    def not_enough_credits_handler(request: Request, exc: NotEnoughCredits) -> Response:
+        error_detail = {
+            "message": exc.message,
+            "detail": exc.detail,
+        }
+        response_schema: ApiResponseSchema = ApiResponseSchema(
+            errors=[error_detail],
+            data={},
+            meta={"path": str(request.url.path), "method": request.method},
+        )
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
             content=response_schema.model_dump(),
         )
 
@@ -75,7 +97,7 @@ def register_error_handlers(app: FastAPI) -> None:
             },
         )
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content=response_schema.model_dump(),
         )
 

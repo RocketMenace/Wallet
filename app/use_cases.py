@@ -1,5 +1,7 @@
 from app.services.wallet import WalletService
+from app.services.transaction import TransactionService
 from app.schemas.wallet import WalletCreateSchema, WalletResponseSchema
+from app.schemas.transaction import TransactionCreateSchema, TransactionResponseSchema
 from uuid import UUID
 
 
@@ -17,3 +19,18 @@ class GetWalletUseCase:
 
     async def execute(self, wallet_id: UUID) -> WalletResponseSchema:
         return await self.wallets_service.get_wallet(wallet_id=wallet_id)
+
+
+class UpdateBalanceUseCase:
+    def __init__(self, transactions_service: TransactionService):
+        self.transactions_service = transactions_service
+
+    async def execute(
+        self,
+        wallet_id: UUID,
+        payload: TransactionCreateSchema,
+    ) -> TransactionResponseSchema:
+        return await self.transactions_service.handle_operation(
+            wallet_id=wallet_id,
+            payload=payload,
+        )

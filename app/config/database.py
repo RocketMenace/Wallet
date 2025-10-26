@@ -12,7 +12,7 @@ class Database:
             url=url,
             pool_pre_ping=False,
             echo=True,
-            isolation_level="READ COMMITTED",
+            isolation_level="REPEATABLE READ",
         )
         self._async_session = async_sessionmaker(
             bind=self._async_engine,

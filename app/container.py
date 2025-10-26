@@ -4,11 +4,13 @@ from .dependencies import (
     ServiceProvider,
     UnitOfWorkProvider,
     UseCaseProvider,
+    OperationFactoryProvider,
 )
 
 container = make_async_container(
     SessionProvider(),
     UnitOfWorkProvider(),
+    OperationFactoryProvider(),
     ServiceProvider(),
     UseCaseProvider(),
 )

@@ -1,5 +1,6 @@
 services:
 
+  # PostgreSQL database
   postgres:
       container_name: postgres
       image: postgres:15-alpine
@@ -27,8 +28,6 @@ services:
     build: .
     ports:
       - "${APP_PORT:-8000}:8000"
-#    volumes:
-#      - .:/app
     depends_on:
       postgres:
         condition: service_healthy

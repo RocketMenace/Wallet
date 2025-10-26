@@ -1,15 +1,10 @@
 from datetime import datetime
-from enum import Enum
 
 from .base import BasePydanticModel
 from uuid import UUID
 from pydantic import Field
 from decimal import Decimal
-
-
-class OperationType(str, Enum):
-    DEPOSIT = "deposit"
-    WITHDRAW = "withdraw"
+from app.models.enums import OperationType
 
 
 class TransactionBaseSchema(BasePydanticModel):

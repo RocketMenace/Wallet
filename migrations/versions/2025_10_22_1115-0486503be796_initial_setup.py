@@ -25,7 +25,7 @@ def upgrade() -> None:
 
     # Create enum type for operation types
     op.execute("""
-        CREATE TYPE operationtype AS ENUM ('deposit', 'withdraw');
+        CREATE TYPE operationtype AS ENUM ('DEPOSIT', 'WITHDRAW');
     """)
 
     # Create wallets table
