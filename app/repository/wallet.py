@@ -18,12 +18,4 @@ class WalletRepository(BaseRepository):
     async def get_by_uuid(self, uuid: UUID) -> WalletResponseSchema | None:
         query = select(self.model).where(self.model.id == uuid).with_for_update()
         result = (await self.session.execute(query)).scalar_one_or_none()
-        if result:
-            return WalletResponseSchema.model_validate(result)
-        return None
-
-    async def get_raw_model_by_uuid(self, uuid: UUID) -> Wallet | None:
-        """Get raw SQLAlchemy model for direct manipulation"""
-        query = select(self.model).where(self.model.id == uuid).with_for_update()
-        result = (await self.session.execute(query)).scalar_one_or_none()
         return result
